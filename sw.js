@@ -4,17 +4,17 @@
 
 const CACHE_NAME = 'wide-forum-v1';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/store.js',
-  '/js/api.js',
-  '/js/auth.js',
-  '/js/components/feed.js',
-  '/js/components/modal.js',
-  '/icon-192.png',
-  '/icon-512.png'
+  '/wide-forum/',
+  '/wide-forum/index.html',
+  '/wide-forum/css/style.css',
+  '/wide-forum/js/app.js',
+  '/wide-forum/js/store.js',
+  '/wide-forum/js/api.js',
+  '/wide-forum/js/auth.js',
+  '/wide-forum/js/components/feed.js',
+  '/wide-forum/js/components/modal.js',
+  '/wide-forum/icon-192.png',
+  '/wide-forum/icon-512.png'
 ];
 
 // ── 설치: 정적 파일 캐시 ──
