@@ -2,7 +2,7 @@
   "name": "WIDE 포럼",
   "short_name": "WIDE",
   "description": "WIDE 다문화 동아리 익명 포럼",
-  "start_url": "/",
+  "start_url": "/wide-forum/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
