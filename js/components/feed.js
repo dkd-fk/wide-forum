@@ -1,6 +1,5 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // WIDE Forum — components/feed.js
-// 피드 카드 렌더링
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 import {
@@ -13,40 +12,11 @@ import { showToast, openModal } from './modal.js';
 import { sendVote } from '../api.js';
 import { isAdmin } from '../auth.js';
 
-function sharePostToKakao(postId) {
-  const post = posts.find(p => p.id === postId);
-  if (!post) return;
-  if (post.isShared) { showToast('⚠️ 이미 공유된 안건입니다.'); return; }
-  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
-    showToast('⚠️ 카카오 SDK가 초기화되지 않았습니다.'); return;
-  }
-  Kakao.Share.sendDefault({
-    objectType: 'feed',
-    content: {
-      title: `[WIDE 포럼 안건] ${post.title}`,
-      description: '새로운 안건이 등록되었습니다. 포럼에서 의견을 남겨주세요.',
-      imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500',
-      link: {
-        mobileWebUrl: `${window.location.href.split('?')[0]}?id=${post.id}`,
-        webUrl:       `${window.location.href.split('?')[0]}?id=${post.id}`
-      }
-    },
-    buttons: [{ title: '안건 참여하기', link: {
-      mobileWebUrl: `${window.location.href.split('?')[0]}?id=${post.id}`,
-      webUrl:       `${window.location.href.split('?')[0]}?id=${post.id}`
-    }}]
-  });
-  post.isShared = true;
-  savePostsToSession();
-  renderFeed();
-  showToast('💬 카카오톡 공유가 실행되었습니다.');
-}
-
 export function renderFeed() {
   const feed = document.getElementById('feed');
   feed.innerHTML = '';
   const ordered = [...posts.filter(p => p.pinned), ...posts.filter(p => !p.pinned)];
-  const admin    = isAdmin();
+  const admin   = isAdmin();
 
   ordered.forEach(post => {
     const ti       = getTypeInfo(post.type);
@@ -55,19 +25,17 @@ export function renderFeed() {
     const mine     = isMyPost(post.id);
     const newBadge = isNew(post) ? '<span class="new-badge">NEW</span>' : '';
 
-    // 삭제 버튼: 관리자 OR (테스트모드) OR 내 안건
     const canDelete = admin || testMode || mine;
     const deleteBtn = canDelete
       ? `<button class="btn-delete-post" data-id="${post.id}">🗑️</button>`
       : '';
 
-    // 상태 변경 (관리자만)
     const statusSelect = admin
       ? `<select class="admin-status-select" data-id="${post.id}">
-           <option value=""     ${!post.status          ? 'selected' : ''}>상태 없음</option>
-           <option value="review"  ${post.status==='review'  ? 'selected' : ''}>수뇌부 검토 중</option>
-           <option value="done"    ${post.status==='done'    ? 'selected' : ''}>의견 수렴 완료</option>
-           <option value="applied" ${post.status==='applied' ? 'selected' : ''}>동아리 반영 완료</option>
+           <option value=""       ${!post.status           ? 'selected' : ''}>상태 없음</option>
+           <option value="review" ${post.status==='review' ? 'selected' : ''}>검토 중</option>
+           <option value="done"   ${post.status==='done'   ? 'selected' : ''}>수렴 완료</option>
+           <option value="applied"${post.status==='applied'? 'selected' : ''}>반영 완료</option>
          </select>`
       : '';
 
@@ -80,28 +48,23 @@ export function renderFeed() {
     const voteBtns = voted
       ? `<div class="voted-label">✅ ${voted === 'agree' ? '찬성' : '반대'} 투표 완료</div>`
       : `<div class="vote-btns">
-           <button class="btn-agree" data-id="${post.id}" data-v="agree">👍 찬성</button>
-           <button class="btn-disagree" data-id="${post.id}" data-v="disagree">👎 반대</button>
+           <button class="btn-agree" data-id="${post.id}" data-v="agree">찬성</button>
+           <button class="btn-disagree" data-id="${post.id}" data-v="disagree">반대</button>
          </div>`;
 
-    const shareBtn = post.isShared
-      ? `<button class="btn-share-kakao" data-id="${post.id}" disabled
-           style="background:#cbd5e1;color:#64748b;cursor:not-allowed;opacity:0.75;">✅ 공유 완료</button>`
-      : `<button class="btn-share-kakao" data-id="${post.id}">💬 단톡방 공유</button>`;
-
-    const mineTag = mine ? '<span style="color:#16a34a;font-size:0.75rem">✏️ 내 안건</span>' : '';
-    const testTag = post.is_test ? '<span style="color:#d97706;font-size:0.72rem">🧪 테스트</span>' : '';
+    const mineTag = mine ? '<span style="color:var(--accent);font-size:0.75rem">내 안건</span>' : '';
+    const testTag = post.is_test ? '<span style="color:var(--text-muted);font-size:0.72rem">테스트</span>' : '';
 
     let bottom = '';
     if (post.type === 'notice') {
-      bottom = `<div class="card-stats"><span>📌 주요 공지사항</span>${shareBtn}</div>`;
+      bottom = `<div class="card-stats"><span>공지사항</span></div>`;
     } else if (post.type === 'vote') {
-      bottom = voteBar + voteBtns + `<div class="card-stats" style="margin-top:8px"><span>💬 토론 ${post.comments.length}</span>${mineTag}${testTag}${shareBtn}</div>`;
+      bottom = voteBar + voteBtns + `<div class="card-stats" style="margin-top:8px"><span>댓글 ${post.comments.length}</span>${mineTag}${testTag}</div>`;
     } else if (post.type === 'idea') {
-      bottom = `<div class="card-stats"><span>💬 대안 ${post.comments.length}개</span>${mineTag}${testTag}${shareBtn}</div>
-                <button class="btn-idea" data-id="${post.id}">💡 새로운 대안 / 장소 제안하기</button>`;
+      bottom = `<div class="card-stats"><span>대안 ${post.comments.length}개</span>${mineTag}${testTag}</div>
+                <button class="btn-idea" data-id="${post.id}">대안 제안하기</button>`;
     } else {
-      bottom = voteBar + voteBtns + `<div class="card-stats" style="margin-top:8px"><span>💬 댓글 ${post.comments.length}</span>${mineTag}${testTag}${shareBtn}</div>`;
+      bottom = voteBar + voteBtns + `<div class="card-stats" style="margin-top:8px"><span>댓글 ${post.comments.length}</span>${mineTag}${testTag}</div>`;
     }
 
     const card = document.createElement('div');
@@ -160,14 +123,6 @@ export function renderFeed() {
 
   feed.querySelectorAll('.btn-idea').forEach(btn => {
     btn.addEventListener('click', e => { e.stopPropagation(); openModal(btn.dataset.id); });
-  });
-
-  feed.querySelectorAll('.btn-share-kakao').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      if (btn.disabled) return;
-      sharePostToKakao(btn.dataset.id);
-    });
   });
 
   feed.querySelectorAll('.card').forEach(card => {
