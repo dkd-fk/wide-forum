@@ -23,6 +23,7 @@
 
   <!-- ── 헤더 ── -->
   <div class="header">
+    <span class="header-title">WIDE</span>
     <button class="btn-header-menu" id="btn-header-menu">⋮</button>
     <div class="header-menu-dropdown" id="header-menu-dropdown">
       <button class="header-menu-btn" id="menu-code-set">코드 발급</button>
@@ -34,23 +35,6 @@
   <!-- ── 테스트 모드 배너 ── -->
   <div class="test-banner hidden" id="test-mode-banner">
     테스트 모드 활성 중 — Sheets에 저장되지 않습니다
-  </div>
-
-  <!-- ── 상단 공지 ── -->
-  <div class="notice">
-    본 포럼은 AI 문체 정제와 닉네임 비노출 시스템을 통해 작성자의 신원 정보를 제거합니다.
-  </div>
-
-  <!-- ── 익명 코드 배너 ── -->
-  <div class="code-banner" id="code-banner">
-    <div class="code-banner-text">
-      <b>코드를 발급하면</b> 다음 접속에서도 내 안건에 댓글을 달 수 있어요.<br>
-      <span style="color:var(--text-sub)">발급하지 않아도 포럼 이용에 지장 없습니다.</span>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
-      <button class="btn-code-setup" id="btn-code-setup">코드 발급</button>
-      <button class="btn-code-skip" id="btn-code-skip">나중에</button>
-    </div>
   </div>
 
   <!-- ── 코드 상태 바 ── -->
@@ -80,15 +64,11 @@
     <span class="sheet-title">안건 작성</span>
     <button class="btn-sheet-close" id="btn-sheet-close">✕</button>
   </div>
-
-  <!-- 안건 타입 선택 -->
   <div class="type-select-row">
     <button class="type-select-btn vote" data-type="vote">투표</button>
     <button class="type-select-btn idea" data-type="idea">의견</button>
     <button class="type-select-btn free active" data-type="general">자유</button>
   </div>
-
-  <!-- AI 정제 미리보기 -->
   <div class="ai-preview" id="ai-preview">
     <div class="ai-preview-label">AI 정제 완료</div>
     <div class="ai-preview-text" id="ai-preview-text"></div>
@@ -97,9 +77,7 @@
       <button class="btn-ai-cancel" id="btn-ai-cancel">원문 복원</button>
     </div>
   </div>
-
   <textarea id="post-input" placeholder="동아리방에 새로 들여놓고 싶은 소모품이 있나요?"></textarea>
-
   <div class="write-btns">
     <button class="btn-ai" id="btn-ai">
       <span class="spinner"></span>
