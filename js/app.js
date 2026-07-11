@@ -255,11 +255,6 @@ document.getElementById('menu-test-mode').addEventListener('click',  () => toggl
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 익명 코드
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-document.getElementById('btn-code-setup').addEventListener('click', () => openCodeOverlay('set'));
-document.getElementById('btn-code-skip').addEventListener('click', () => {
-  localStorage.setItem(LS_CODE_SKIP, '1');
-  document.getElementById('code-banner').classList.add('hidden');
-});
 document.getElementById('btn-code-logout').addEventListener('click', () => {
   setActiveCodeHash(null);
   localStorage.removeItem(LS_CODE);
