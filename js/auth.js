@@ -29,17 +29,21 @@ export function updateCodeUI() {
   const skipped = localStorage.getItem(LS_CODE_SKIP);
 
   if (activeCodeHash) {
-    banner.classList.add('hidden');
-    status.classList.remove('hidden');
-    document.getElementById('code-status-text').textContent =
-      isAdmin()
-        ? '🔑 관리자 코드 활성 중 — 공지 작성 및 상태 변경 가능'
-        : '🔑 익명 코드 활성 중 — 내 안건에서 [작성자] 댓글 가능';
+    if (banner) banner.classList.add('hidden');
+    if (status) {
+      status.classList.remove('hidden');
+      document.getElementById('code-status-text').textContent =
+        isAdmin()
+          ? '관리자 모드 활성화 중'
+          : '코드 활성 중';
+    }
   } else {
-    status.classList.add('hidden');
-    skipped
-      ? banner.classList.add('hidden')
-      : banner.classList.remove('hidden');
+    if (status) status.classList.add('hidden');
+    if (banner) {
+      skipped
+        ? banner.classList.add('hidden')
+        : banner.classList.remove('hidden');
+    }
   }
 }
 
