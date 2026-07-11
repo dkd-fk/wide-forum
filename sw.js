@@ -2,7 +2,7 @@
 // WIDE Forum — Service Worker
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-const CACHE_NAME = 'wide-forum-v2';
+const CACHE_NAME = 'wide-forum-v3';
 const STATIC_ASSETS = [
   '/wide-forum/',
   '/wide-forum/index.html',
