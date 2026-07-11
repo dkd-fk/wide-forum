@@ -24,14 +24,6 @@ import { renderFeed } from './components/feed.js';
 import { showToast, closeModal, submitComment } from './components/modal.js';
 
 export function refreshFeed() { renderFeed(); }
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 카카오 SDK
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
-  Kakao.init('8a25ff05ecfaa9e403578e36821df125');
-}
-
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 작성 시트 열기/닫기
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
