@@ -46,7 +46,6 @@ export function updateCodeUI() {
     }
   }
 }
-
 // ── 코드 오버레이 열기 ──
 let codeOverlayMode = 'set';
 
