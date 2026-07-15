@@ -399,40 +399,28 @@ body {
 #post-input::placeholder { color: var(--text-muted); }
 #post-input:focus { background: var(--bg-layer2); }
 
-/* ── AI 정제 미리보기 ── */
-.ai-preview {
-  background: var(--accent-dim);
-  border-radius: 12px;
-  padding: 12px;
-  display: none;
-  flex-direction: column;
-  gap: 8px;
+/* ── AI 정제 상태 표시 (인라인) ── */
+.ai-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 2px 0;
 }
-.ai-preview.visible { display: flex; }
-.ai-preview-label  { font-size: 0.75rem; font-weight: 700; color: var(--accent); }
-.ai-preview-text   { font-size: 0.88rem; color: var(--text); line-height: 1.55; }
-.ai-preview-btns   { display: flex; gap: 8px; }
-.btn-ai-use {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  border-radius: 10px;
-  background: var(--accent);
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-.btn-ai-cancel {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  border-radius: 10px;
-  background: var(--bg-layer2);
-  color: var(--text-sub);
+.ai-status.hidden { display: none; }
+.ai-status-label {
+  font-size: 0.75rem;
   font-weight: 600;
-  font-size: 0.85rem;
+  color: var(--accent);
+}
+.btn-ai-revert {
+  background: none;
+  border: none;
+  color: var(--text-sub);
+  font-size: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
+  text-decoration: underline;
+  padding: 2px 4px;
 }
 
 /* ── 액션 버튼 ── */
