@@ -25,7 +25,7 @@ export function renderFeed() {
     const mine     = isMyPost(post.id);
     const newBadge = isNew(post) ? '<span class="new-badge">NEW</span>' : '';
 
-    const canDelete = admin || testMode || mine;
+    const canDelete = admin || mine || post.is_test;
     const deleteBtn = canDelete
       ? `<button class="btn-delete-post" data-id="${post.id}">🗑️</button>`
       : '';
