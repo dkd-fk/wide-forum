@@ -2,19 +2,19 @@
 // WIDE Forum — Service Worker
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-const CACHE_NAME = 'wide-forum-v3';
+const CACHE_NAME = 'wide-forum-v4';
 const STATIC_ASSETS = [
-  '/wide-forum/',
-  '/wide-forum/index.html',
-  '/wide-forum/css/style.css',
-  '/wide-forum/js/app.js',
-  '/wide-forum/js/store.js',
-  '/wide-forum/js/api.js',
-  '/wide-forum/js/auth.js',
-  '/wide-forum/js/components/feed.js',
-  '/wide-forum/js/components/modal.js',
-  '/wide-forum/icon-192.png',
-  '/wide-forum/icon-512.png'
+  '/',
+  '/index.html',
+  '/css/style.css',
+  '/js/app.js',
+  '/js/store.js',
+  '/js/api.js',
+  '/js/auth.js',
+  '/js/components/feed.js',
+  '/js/components/modal.js',
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 // ── 설치: 정적 파일 캐시 ──
@@ -37,20 +37,21 @@ self.addEventListener('activate', e => {
 
 // ── 요청: 캐시 우선, 없으면 네트워크 ──
 self.addEventListener('fetch', e => {
+  // GAS 프록시 요청은 캐시 안 함
   if (e.request.url.includes('script.google.com')) return;
 
   e.respondWith(
-    fetch(e.request)
-      .then(res => {
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(res => {
+        // 정적 파일만 캐시에 추가
         if (e.request.method === 'GET' && res.status === 200) {
           const resClone = res.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(e.request, resClone));
         }
         return res;
-      })
-      .catch(() => caches.match(e.request)
-        .then(cached => cached || caches.match('/wide-forum/index.html'))
-      )
+      });
+    }).catch(() => caches.match('/index.html'))
   );
 });
 
