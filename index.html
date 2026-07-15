@@ -37,10 +37,10 @@
   </div>
 
   <!-- ── 코드 상태 바 ── -->
-<div class="code-status hidden" id="code-status">
-  <span class="code-status-text" id="code-status-text">코드 활성</span>
-  <button class="btn-code-logout" id="btn-code-logout">로그아웃</button>
-</div>
+  <div class="code-status hidden" id="code-status">
+    <span class="code-status-text" id="code-status-text">코드 활성</span>
+    <button class="btn-code-logout" id="btn-code-logout">로그아웃</button>
+  </div>
 
   <!-- ── 피드 ── -->
   <div class="feed" id="feed"></div>
@@ -68,13 +68,9 @@
     <button class="type-select-btn idea" data-type="idea">의견</button>
     <button class="type-select-btn free active" data-type="general">자유</button>
   </div>
-  <div class="ai-preview" id="ai-preview">
-    <div class="ai-preview-label">AI 정제 완료</div>
-    <div class="ai-preview-text" id="ai-preview-text"></div>
-    <div class="ai-preview-btns">
-      <button class="btn-ai-use" id="btn-ai-use">정제본 등록</button>
-      <button class="btn-ai-cancel" id="btn-ai-cancel">원문 복원</button>
-    </div>
+  <div class="ai-status hidden" id="ai-status">
+    <span class="ai-status-label">AI 정제됨 · 직접 수정 가능</span>
+    <button class="btn-ai-revert" id="btn-ai-revert">원문 복원</button>
   </div>
   <textarea id="post-input" placeholder="동아리방에 새로 들여놓고 싶은 소모품이 있나요?"></textarea>
   <div class="write-btns">
