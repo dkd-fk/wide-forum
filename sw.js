@@ -2,19 +2,19 @@
 // WIDE Forum — Service Worker
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-const CACHE_NAME = 'wide-forum-v4';
+const CACHE_NAME = 'wide-forum-v5'; // 버전 번호를 올려 기존 캐시 갱신 유도
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/store.js',
-  '/js/api.js',
-  '/js/auth.js',
-  '/js/components/feed.js',
-  '/js/components/modal.js',
-  '/icon-192.png',
-  '/icon-512.png'
+  './', 
+  './index.html',
+  './css/style.css',
+  './js/app.js',
+  './js/store.js',
+  './js/api.js',
+  './js/auth.js',
+  './js/components/feed.js',
+  './js/components/modal.js',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // ── 설치: 정적 파일 캐시 ──
