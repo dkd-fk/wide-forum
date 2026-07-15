@@ -4,11 +4,11 @@
 
 import {
   posts, activeCodeHash, myPostsMap,
-  pendingRefinedText, pendingSubmit, currentPromptIdx, testMode,
+  pendingSubmit, currentPromptIdx, testMode,
   MICRO_QUESTIONS, LS_CODE, LS_CODE_SKIP,
   addMyPost, savePostsToSession, setPosts, setMicroQuestions,
   genBarcode, setActiveCodeHash, setPendingSubmit,
-  setPendingRefinedText, setCurrentPromptIdx, setTestMode
+  setCurrentPromptIdx, setTestMode
 } from './store.js';
 
 import {
@@ -24,6 +24,7 @@ import { renderFeed } from './components/feed.js';
 import { showToast, closeModal, submitComment } from './components/modal.js';
 
 export function refreshFeed() { renderFeed(); }
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 작성 시트 열기/닫기
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -35,8 +36,7 @@ function openSheet() {
 function closeSheet() {
   document.getElementById('write-sheet').classList.remove('active');
   document.getElementById('btn-fab').style.display = 'flex';
-  document.getElementById('ai-preview').classList.remove('visible');
-  setPendingRefinedText(null);
+  document.getElementById('ai-status').classList.add('hidden');
 }
 
 document.getElementById('btn-fab').addEventListener('click', openSheet);
@@ -114,24 +114,25 @@ export async function handleUpdateStatus(id, status) {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// AI 버튼
+// AI 버튼 — 인라인 정제 (textarea 직접 교체 + 수정 가능)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const btnAi         = document.getElementById('btn-ai');
-const aiPreview     = document.getElementById('ai-preview');
-const aiPreviewText = document.getElementById('ai-preview-text');
-const postInput     = document.getElementById('post-input');
+const btnAi     = document.getElementById('btn-ai');
+const aiStatus  = document.getElementById('ai-status');
+const btnRevert = document.getElementById('btn-ai-revert');
+const postInput = document.getElementById('post-input');
+
+let originalBeforeRefine = null; // 정제 전 원문 (되돌리기용)
 
 btnAi.addEventListener('click', async () => {
   const val = postInput.value.trim();
   if (!val) { showToast('내용을 먼저 입력해주세요.'); return; }
   btnAi.classList.add('loading');
   btnAi.disabled = true;
-  aiPreview.classList.remove('visible');
   try {
     const refined = await callGroq(val);
-    setPendingRefinedText(refined);
-    aiPreviewText.textContent = refined;
-    aiPreview.classList.add('visible');
+    originalBeforeRefine = val;
+    postInput.value = refined;
+    aiStatus.classList.remove('hidden');
   } catch (e) {
     showToast('AI 정제 실패: ' + e.message);
   } finally {
@@ -140,15 +141,12 @@ btnAi.addEventListener('click', async () => {
   }
 });
 
-document.getElementById('btn-ai-use').addEventListener('click', () => {
-  if (!pendingRefinedText) return;
-  doSubmit(pendingRefinedText, selectedPostType);
-  aiPreview.classList.remove('visible');
-  setPendingRefinedText(null);
-});
-document.getElementById('btn-ai-cancel').addEventListener('click', () => {
-  aiPreview.classList.remove('visible');
-  setPendingRefinedText(null);
+btnRevert.addEventListener('click', () => {
+  if (originalBeforeRefine !== null) {
+    postInput.value = originalBeforeRefine;
+    originalBeforeRefine = null;
+  }
+  aiStatus.classList.add('hidden');
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -173,8 +171,8 @@ document.querySelectorAll('.type-select-btn').forEach(btn => {
   });
 });
 
-async function doSubmit(text, type = 'general') {
-  const val = (text || postInput.value).trim();
+async function doSubmit(type = 'general') {
+  const val = postInput.value.trim();
   if (!val) return;
 
   const newId   = 'post_' + Date.now();
@@ -192,7 +190,8 @@ async function doSubmit(text, type = 'general') {
   addMyPost(newId);
   savePostsToSession();
   postInput.value = '';
-  setPendingRefinedText(null);
+  aiStatus.classList.add('hidden');
+  originalBeforeRefine = null;
 
   // 타입 초기화
   document.querySelectorAll('.type-select-btn').forEach(b => b.classList.remove('active'));
@@ -213,11 +212,12 @@ async function doSubmit(text, type = 'general') {
 document.getElementById('btn-submit').addEventListener('click', () => {
   const val = postInput.value.trim();
   if (!val) { showToast('내용을 입력해주세요!'); return; }
-  if (pendingRefinedText) {
-    doSubmit(pendingRefinedText, selectedPostType);
-  } else {
+  // AI 정제를 거치지 않은 원문 등록 시에만 가이드 팝업 표시
+  if (aiStatus.classList.contains('hidden')) {
     setPendingSubmit(true);
     document.getElementById('guide-overlay').classList.remove('hidden');
+  } else {
+    doSubmit(selectedPostType);
   }
 });
 
@@ -227,7 +227,7 @@ document.getElementById('popup-cancel').addEventListener('click', () => {
 });
 document.getElementById('popup-ok').addEventListener('click', async () => {
   document.getElementById('guide-overlay').classList.add('hidden');
-  if (pendingSubmit) { await doSubmit(null, selectedPostType); setPendingSubmit(false); }
+  if (pendingSubmit) { await doSubmit(selectedPostType); setPendingSubmit(false); }
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
